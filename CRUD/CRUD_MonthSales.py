@@ -1,0 +1,67 @@
+from .Get_cursor import CursorM
+
+
+
+class CRUDSALESM:
+    
+    _SELECT = 'SELECT * FROM monthdb'
+    _INSERT = 'INSERT INTO monthdb(name,quantity,date) VALUES(%s,%s,%s)'
+    _UPDATE = 'UPDATE monthdb SET quantity = quantity + %s WHERE id = %s'
+    
+    @classmethod
+    def check_products(cls, products):
+        crud = CRUDSALESM()
+        records = crud.select()
+        product = None
+        found_product = False
+        
+        for record in records:
+                if products[0] in record[1]:
+                    id_product = record[0]
+                    product = (int(products[1]), id_product)
+                    found_product = True
+                    
+        if found_product:
+            crud.update(product)
+            return True
+        else:
+            crud.insert(products)
+            return True
+            
+    
+    def select(cls):
+        with CursorM() as cursor:
+            cursor.execute(cls._SELECT)
+            records = cursor.fetchall()
+            products = []
+            for record in records:
+                products.append(record)
+            return products
+        
+    def insert(cls, product):
+        with CursorM() as cursor:
+            try: 
+                values = (product[0], product[1], product[2])
+                cursor.execute(cls._INSERT, values)
+            except Exception as e:
+                print(f'An error occurred while we were trying add the sales.: {e}')
+                
+    def update(cls, product):
+        with CursorM() as cursor:
+            try:
+                values = (product[0], product[1])
+                cursor.execute(cls._UPDATE, values)
+            except Exception as e:
+                print(f'An error occurred while we were trying to do a update: {e}')
+                
+                
+if __name__ == '__main__':
+    
+    #product = CRUDSALESM().update((3,1))
+    
+    #product = CRUDSALESM().insert(('Rice', '2', '12/2/2026'))
+    
+    #product = CRUDSALESM().check_products(('Water', '1', '12/2/2026'))
+    
+    product = CRUDSALESM().select()
+    print(product)
