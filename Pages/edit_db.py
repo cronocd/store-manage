@@ -1,5 +1,7 @@
 import tkinter as tk
+from tkinter import ttk
 
+from CRUD.CRUD_Products import CRUD
 class Edit(tk.Frame):
     def __init__(self, parent, master):
         super().__init__(parent, bg="#ffffff")
@@ -15,6 +17,11 @@ class Edit(tk.Frame):
         
         self.container = tk.Frame(self, bg='white')
         self.container.pack(fill='x', pady=10)
+    
+    def table_product(self):
+        product = ()
+        
+        self.table = ttk.Treeview(self.container_t, columns=product, show='headings')
     
     def table_container(self):
         
@@ -54,3 +61,11 @@ class Edit(tk.Frame):
         self.name_entry.delete(0, 'END')
         self.quantity_entry.delete(0, 'END')
         self.price_entry.delete(0, 'END')
+        
+    def load_table(self):
+        for product in self.table.get_children():
+            self.table.delete(product)
+            
+        records = CRUD.select()
+        for record in records:
+            self.table.insert(parent='', index='end', values=record)
