@@ -9,11 +9,17 @@ class Edit(tk.Frame):
         self.edit_container()
         self.entries()
         self.buttons()
+        self.table_container()
         
     def edit_container(self):
         
         self.container = tk.Frame(self, bg='white')
         self.container.pack(fill='x', pady=10)
+    
+    def table_container(self):
+        
+        self.container_t = tk.Frame(self, bg='white')
+        self.container_t.pack(fill='x', side='bottom')
         
     def entries(self):
         
