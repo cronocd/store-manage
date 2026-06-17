@@ -24,6 +24,7 @@ class Manager:
     def show_buttons(self):
         from Pages.home import Home
         from Pages.Sell_W import Sell_Window
+        from Pages.edit_db import Edit
 
         self.lb = tk.Label(self.nav_bar, text='Menu', font=('Arial', 12, 'bold'), bg = '#2c3e50', fg='white')
         self.lb.pack(pady=15)
@@ -33,6 +34,10 @@ class Manager:
 
         self.buttons_sell = tk.Button(self.nav_bar, text='Sell', relief='flat', command= lambda: self.show_pages(Sell_Window))
         self.buttons_sell.pack(fill=tk.X, padx=10, pady=20)
+        
+        self.button_edit = tk.Button(self.nav_bar, text='Edit Products', relief='flat', command= lambda: self.show_pages(Edit))
+        self.button_edit.pack(fill=tk.X, padx=10, pady=50)
+        
 
 
     def show_pages(self, pages_content):

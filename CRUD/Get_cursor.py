@@ -40,8 +40,8 @@ class CursorM:
             self.connection.rollback()
             print(f'{exc}-:-{exc_type}-:-{tb}')
         else:
-            self.connection.commit
-            self.cursor.close
+            self.connection.commit()
+            self.cursor.close()
             ConnectionM().left_pool(self.connection)
             
 if __name__ == '__main__':

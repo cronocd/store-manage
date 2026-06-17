@@ -3,7 +3,7 @@ from tkinter.ttk import Treeview
 from tkinter.messagebox import showwarning, showinfo, showerror
 from datetime import date
 from CRUD.CRUD_DailySales import CRUDSALES
-
+from CRUD.CRUD_MonthSales import CRUDSALESM
 from CRUD.CRUD_Products import CRUD
 
 
@@ -188,6 +188,7 @@ class Sell_Window(tk.Frame):
         for record in self.products_list:
             product = (record[0], record[2], date_sale)
             daily = CRUDSALES.check_products(product)
+            month = CRUDSALESM.check_products(product)
             store = CRUD.subtract((record[2], record[0]))
         if daily and store:
             showinfo(title = 'Sales', message= 'To sale is already')

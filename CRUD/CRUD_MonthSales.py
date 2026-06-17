@@ -1,4 +1,6 @@
 from .Get_cursor import CursorM
+import datetime
+import calendar
 
 
 
@@ -11,7 +13,7 @@ class CRUDSALESM:
     @classmethod
     def check_products(cls, products):
         crud = CRUDSALESM()
-        records = crud.select()
+        records = crud.select_current_month()
         product = None
         found_product = False
         
@@ -22,13 +24,16 @@ class CRUDSALESM:
                     found_product = True
                     
         if found_product:
+            print("Here")
             crud.update(product)
             return True
         else:
+            print("Here-")
             crud.insert(products)
             return True
             
     
+    @classmethod
     def select(cls):
         with CursorM() as cursor:
             cursor.execute(cls._SELECT)
@@ -37,6 +42,48 @@ class CRUDSALESM:
             for record in records:
                 products.append(record)
             return products
+
+    @classmethod
+    def select_current_month(cls):
+        """Return all monthdb rows for the current month automatically."""
+        today = datetime.date.today()
+        first_day = datetime.date(today.year, today.month, 1)
+        last_day = datetime.date(today.year, today.month, calendar.monthrange(today.year, today.month)[1])
+        query = cls._SELECT + ' WHERE date BETWEEN %s AND %s ORDER BY date'
+        with CursorM() as cursor:
+            cursor.execute(query, (first_day, last_day))
+            return cursor.fetchall()
+
+    @classmethod
+    def select_month_sales(cls, year, month):
+        """Return aggregated sales (name, total_quantity) for the given month.
+
+        Uses a single SQL query with GROUP BY for efficiency.
+        """
+        first_day = datetime.date(year, month, 1)
+        last_day = datetime.date(year, month, calendar.monthrange(year, month)[1])
+        query = (
+            "SELECT name, SUM(quantity) as total "
+            "FROM monthdb "
+            "WHERE date BETWEEN %s AND %s "
+            "GROUP BY name "
+            "ORDER BY total DESC"
+        )
+        with CursorM() as cursor:
+            cursor.execute(query, (first_day, last_day))
+            return cursor.fetchall()
+
+    @classmethod
+    def select_current_month_sales(cls):
+        today = datetime.date.today()
+        return cls.select_month_sales(today.year, today.month)
+
+    @classmethod
+    def select_previous_month_sales(cls):
+        today = datetime.date.today()
+        first_day_this_month = datetime.date(today.year, today.month, 1)
+        prev_month_last = first_day_this_month - datetime.timedelta(days=1)
+        return cls.select_month_sales(prev_month_last.year, prev_month_last.month)
         
     def insert(cls, product):
         with CursorM() as cursor:
@@ -61,7 +108,7 @@ if __name__ == '__main__':
     
     #product = CRUDSALESM().insert(('Rice', '2', '12/2/2026'))
     
-    #product = CRUDSALESM().check_products(('Water', '1', '12/2/2026'))
+    product = CRUDSALESM().check_products(('Water', '1', '2026/6/15'))
     
     product = CRUDSALESM().select()
     print(product)

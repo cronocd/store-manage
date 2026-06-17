@@ -23,7 +23,7 @@ class Home(tk.Frame):
         products = []
         stock = []
         
-        record = CRUDSALESM().select() 
+        record = CRUDSALESM().select_current_month() 
         for product in record:
             products.append(product[1])
             stock.append(product[2])

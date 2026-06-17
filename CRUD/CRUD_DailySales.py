@@ -4,7 +4,7 @@ from .Get_cursor import CursorS
 
 class CRUDSALES:
     
-    _SELECT = 'SELECT * FROM salesdb'
+    _SELECT = 'SELECT * FROM salesdb WHERE date = CURRENT_DATE ORDER BY date DESC'
     _INSERT = 'INSERT INTO salesdb(name,quantity,date) VALUES(%s,%s,%s)'
     _UPDATE = 'UPDATE salesdb SET quantity = quantity + %s WHERE id = %s'
     
