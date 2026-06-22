@@ -29,16 +29,20 @@ class Manager:
         self.lb = tk.Label(self.nav_bar, text='Menu', font=('Arial', 12, 'bold'), bg = '#2c3e50', fg='white')
         self.lb.pack(pady=15)
         
-        self.buttons_home = tk.Button(self.nav_bar, text='Home', relief='flat', command=lambda : self.show_pages(Home))
-        self.buttons_home.pack(fill=tk.X, padx=10, pady=5)
+        self.buttons_home = tk.Button(self.nav_bar, text='Home', relief='flat', font=('Arial', 12, 'bold'), command=lambda : self.show_pages(Home))
+        self.buttons_home.pack(fill=tk.X, padx=10, pady=10)
 
-        self.buttons_sell = tk.Button(self.nav_bar, text='Sell', relief='flat', command= lambda: self.show_pages(Sell_Window))
-        self.buttons_sell.pack(fill=tk.X, padx=10, pady=20)
+        self.buttons_sell = tk.Button(self.nav_bar, text='Sell', relief='flat', font=('Arial', 12, 'bold'), command= lambda: self.show_pages(Sell_Window))
+        self.buttons_sell.pack(fill=tk.X, padx=10, pady=50)
         
-        self.button_edit = tk.Button(self.nav_bar, text='Edit Products', relief='flat', command= lambda: self.show_pages(Edit))
+        self.button_edit = tk.Button(self.nav_bar, text='Edit Products', relief='flat', font=('Arial', 12, 'bold'), command= lambda: self.show_pages(Edit))
         self.button_edit.pack(fill=tk.X, padx=10, pady=50)
         
-
+        self.button_exit = tk.Button(self.nav_bar, text='Close', relief='flat', font=('Arial', 12, 'bold'))
+        self.button_exit.pack(fill=tk.X, padx=10, pady=50)
+        
+        self.footer = tk.Label(self.nav_bar,text='Made By Francisco \n @Cronos', font=('Arial', 10, 'bold'), bg="#2c3e50", fg='white')
+        self.footer.pack(fill=tk.X, pady=30)
 
     def show_pages(self, pages_content):
 

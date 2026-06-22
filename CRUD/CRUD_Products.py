@@ -4,7 +4,7 @@ from product import Product
 
 
 class CRUD():
-    _SELECT='SELECT * FROM products'
+    _SELECT='SELECT * FROM products ORDER BY id ASC'
     _INSERT='INSERT INTO products (name, stock, cost) VALUES(%s, %s, %s)'
     _UPDATE='UPDATE products SET name=%s, stock=%s, cost=%s WHERE id = %s'
     _DELETE='DELETE FROM products WHERE id=%s'

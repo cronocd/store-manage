@@ -10,7 +10,7 @@ from CRUD.CRUD_Products import CRUD
 class Sell_Window(tk.Frame):
     def __init__(self, parent, master):
         super().__init__(parent, bg='#ffffff')
-        self.products_list = []
+        self.products_list = None
         self.lb = tk.Label(self, text='Sell', font=('Arial',18, 'bold'), fg='black', bg='white')
         self.lb.pack(pady=20)
         self.container_search()
@@ -139,16 +139,21 @@ class Sell_Window(tk.Frame):
         quantity = self.quantity_field.get()
         inf_product = (product, cost, quantity)
         add = True
-        for product in self.products_list:
-            if inf_product[0] in product[0]:
-                add = False
-                
-        if add is not True:
-            showwarning(title='Product in cart', message='The product is already')
-        else:            
-            self.products_list.append(inf_product)
-            self.load_cart_table()
-            print(self.products_list)
+        
+        if product and cost and quantity:
+            for product in self.products_list:
+                if inf_product[0] in product[0]:
+                    add = False
+                    
+            if add is not True:
+                showwarning(title='Product in cart', message='The product is already')
+            else:            
+                self.products_list.append(inf_product)
+                self.load_cart_table()
+                print(self.products_list)
+        else:
+            showwarning(title='...', message='Complete the field')
+            self.clean_entries()
 
     def load_cart_table(self):
 
@@ -170,7 +175,7 @@ class Sell_Window(tk.Frame):
         else:
             products = CRUD.select()
             for product in products:
-                if info in product[1]:
+                if info.lower() in product[1].lower():
                     mach_product.append((product[0],product[1],product[2],product[3]))
                     
         if len(mach_product) == 0: 
@@ -185,17 +190,24 @@ class Sell_Window(tk.Frame):
                 
     def sell_button(self):
         date_sale = date.today()
-        for record in self.products_list:
-            product = (record[0], record[2], date_sale)
-            daily = CRUDSALES.check_products(product)
-            month = CRUDSALESM.check_products(product)
-            store = CRUD.subtract((record[2], record[0]))
-        if daily and store:
-            showinfo(title = 'Sales', message= 'To sale is already')
+         
+        if self.products_list is not None:
             
-            for product in self.sell_tb.get_children():
-                self.sell_tb.delete(product)
-            
-            self.clean_entries()
+            for record in self.products_list:
+                product = (record[0], record[2], date_sale)
+                daily = CRUDSALES.check_products(product)
+                month = CRUDSALESM.check_products(product)
+                store = CRUD.subtract((record[2], record[0]))
+            if daily and store:
+                showinfo(title = 'Sales', message= 'To sale is already')
+                
+                for product in self.sell_tb.get_children():
+                    self.sell_tb.delete(product)
+                
+                self.clean_entries()
+            else:
+                showerror(title='Sales', message='An error occurred please, check it')
+                self.products_list = []
         else:
-            showerror(title='Sales', message='An error occurred please, check it')
+            showwarning(title='...', message='Add something to the list first.')
+            self.products_list = []
