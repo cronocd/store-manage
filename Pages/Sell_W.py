@@ -194,6 +194,7 @@ class Sell_Window(tk.Frame):
         date_sale = date.today()
         records = CRUD.select()
         IDs = []
+        products = []
         if len(self.products_list) is not 0:
             
             for record in records:
@@ -201,34 +202,62 @@ class Sell_Window(tk.Frame):
                     if not int(record[2]) > int(product[2]) and record[1] == product[0]:
                         showerror(title='NO STOCK', message=f'Stock not enough of {product[0]}')
                         IDs.append(product[0])
-                    else:
-                        print('fine')
+                        
             if len(IDs) is not 0:
-                products = []
                 for product in self.products_list:
                     for id in IDs:
                         if product[0] != id:
                             products.append(product)
                         else:
                             print(product[0])
-            print(products)
+            if len(products) == 0:
+                
+                for record in self.products_list:
+
+                    product = (record[0], record[2], date_sale, self.role[2])
+                    daily = CRUDSALES.check_products(product)
+                    month = CRUDSALESM.check_products(product)
+                    store = CRUD.subtract((record[2], record[0]))
+                if daily and month and store:
+                    showinfo(title = 'Sales', message= 'To sale is already')
+                    
+                    for product in self.sell_tb.get_children():
+                        self.sell_tb.delete(product)
+                    
+                    History().log_sales(self.products_list, 'Francisco')
+                    self.clean_entries()
+                else:
+                    showerror(title='Sales', message='An error occurred please, check it')
+                    
+                    for product in self.sell_tb.get_children():
+                        self.sell_tb.delete(product)
                         
-            #for record in self.products_list:
-            #    product = (record[0], record[2], date_sale)
-            #    daily = CRUDSALES.check_products(product)
-            #    month = CRUDSALESM.check_products(product)
-            #    store = CRUD.subtract((record[2], record[0]))
-            #if daily and store:
-            #    showinfo(title = 'Sales', message= 'To sale is already')
-            #    
-            #    for product in self.sell_tb.get_children():
-            #        self.sell_tb.delete(product)
-            #    
-            #    History().log_sales(self.products_list, 'Francisco')
-            #    self.clean_entries()
-            #else:
-            #    showerror(title='Sales', message='An error occurred please, check it')
-            #    self.products_list = []
+                    self.products_list = []
+                    
+            elif len(products) != 0:
+                
+                for record in products:
+
+                    product = (record[0], record[2], date_sale, self.role[2])
+                    daily = CRUDSALES.check_products(product)
+                    month = CRUDSALESM.check_products(product)
+                    store = CRUD.subtract((record[2], record[0]))
+                if daily and month and store:
+                    showinfo(title = 'Sales', message= 'To sale is already')
+                    
+                    for product in self.sell_tb.get_children():
+                        self.sell_tb.delete(product)
+                    
+                    History().log_sales(self.products_list, 'Francisco')
+                    self.clean_entries()
+                    self.products_list = []
+                else:
+                    showerror(title='Sales', message='An error occurred please, check it')
+                    
+                    for product in self.sell_tb.get_children():
+                        self.sell_tb.delete(product)
+                    
+                    self.products_list = []
         else:
             showwarning(title='...', message='Add something to the list first.')
             self.products_list = []

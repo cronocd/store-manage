@@ -5,26 +5,27 @@ from get_cursor import Cursor
 class CRUDSALES:
     
     _SELECT = 'SELECT * FROM dailysales WHERE date = CURRENT_DATE ORDER BY date DESC'
-    _INSERT = 'INSERT INTO dailysales(name,quantity,date) VALUES(%s,%s,%s)'
-    _UPDATE = 'UPDATE dailysales SET quantity = quantity + %s WHERE id = %s'
+    _INSERT = 'INSERT INTO dailysales(name, quantity, date, id_user) VALUES(%s, %s, %s, %s)'
+    _UPDATE = 'UPDATE dailysales SET quantity = quantity + %s WHERE name = %s AND id_user = %s AND date = %s'
     
     @classmethod
     def check_products(cls, products):
         crud = CRUDSALES()
         records = crud.select()
-        product = None
         found_product = False
         
         for record in records:
-                if products[0] in record[1]:
-                    id_product = record[0]
-                    product = (int(products[1]), id_product)
-                    found_product = True
-                    
+            # record indexes: name, quantity, date, id_user
+            if products[0] == record[0] and products[3] == record[3]:
+                product = (int(products[1]), products[0], products[3], products[2])
+                found_product = True
+                break
+                
         if found_product:
             crud.update(product)
             return True
         else:
+            print('something wrong')
             crud.insert(products)
             return True
             
@@ -49,7 +50,7 @@ class CRUDSALES:
     def update(cls, product):
         with Cursor() as cursor:
             try:
-                values = (product[1], product[2])
+                values = (product[0], product[1], product[2], product[3])
                 cursor.execute(cls._UPDATE, values)
             except Exception as e:
                 print(f'An error occurred while we were trying to do a update: {e}')

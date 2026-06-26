@@ -7,28 +7,26 @@ import calendar
 class CRUDSALESM:
     
     _SELECT = 'SELECT * FROM monthsales'
-    _INSERT = 'INSERT INTO monthsales(name,quantity,date) VALUES(%s,%s,%s)'
-    _UPDATE = 'UPDATE monthsales SET quantity = quantity + %s WHERE id = %s'
+    _INSERT = 'INSERT INTO monthsales(name, quantity, date, id_user) VALUES(%s, %s, %s, %s)'
+    _UPDATE = 'UPDATE monthsales SET quantity = quantity + %s WHERE name = %s AND id_user = %s AND date = %s'
     
     @classmethod
     def check_products(cls, products):
         crud = CRUDSALESM()
         records = crud.select_current_month()
-        product = None
+
         found_product = False
         
         for record in records:
-                if products[0] in record[1]:
-                    id_product = record[0]
-                    product = (int(products[1]), id_product)
-                    found_product = True
+                if products[0] == record[0] and products[3] == record[3]:
+
+                        product = (int(products[1]), products[0], products[3], products[2])
+                        found_product = True
                     
         if found_product:
-            print("Here")
             crud.update(product)
-            return True
+            return  True
         else:
-            print("Here-")
             crud.insert(products)
             return True
             
@@ -93,7 +91,7 @@ class CRUDSALESM:
     def update(cls, product):
         with Cursor() as cursor:
             try:
-                values = (product[0], product[1])
+                values = (product[0], product[1], product[2], product[3])
                 cursor.execute(cls._UPDATE, values)
             except Exception as e:
                 print(f'An error occurred while we were trying to do a update: {e}')
