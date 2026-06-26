@@ -1,12 +1,12 @@
-from .Get_cursor import CursorS
+from get_cursor import Cursor
 
 
 
 class CRUDSALES:
     
-    _SELECT = 'SELECT * FROM salesdb WHERE date = CURRENT_DATE ORDER BY date DESC'
-    _INSERT = 'INSERT INTO salesdb(name,quantity,date) VALUES(%s,%s,%s)'
-    _UPDATE = 'UPDATE salesdb SET quantity = quantity + %s WHERE id = %s'
+    _SELECT = 'SELECT * FROM dailysales WHERE date = CURRENT_DATE ORDER BY date DESC'
+    _INSERT = 'INSERT INTO dailysales(name,quantity,date) VALUES(%s,%s,%s)'
+    _UPDATE = 'UPDATE dailysales SET quantity = quantity + %s WHERE id = %s'
     
     @classmethod
     def check_products(cls, products):
@@ -30,7 +30,7 @@ class CRUDSALES:
             
     
     def select(cls):
-        with CursorS() as cursor:
+        with Cursor() as cursor:
             cursor.execute(cls._SELECT)
             records = cursor.fetchall()
             products = []
@@ -39,17 +39,17 @@ class CRUDSALES:
             return products
         
     def insert(cls, product):
-        with CursorS() as cursor:
+        with Cursor() as cursor:
             try: 
-                values = (product[0], product[1], product[2])
+                values = (product[0],product[1], product[2], product[3])
                 cursor.execute(cls._INSERT, values)
             except Exception as e:
                 print(f'An error occurred while we were trying add the sales.: {e}')
                 
     def update(cls, product):
-        with CursorS() as cursor:
+        with Cursor() as cursor:
             try:
-                values = (product[0], product[1])
+                values = (product[1], product[2])
                 cursor.execute(cls._UPDATE, values)
             except Exception as e:
                 print(f'An error occurred while we were trying to do a update: {e}')

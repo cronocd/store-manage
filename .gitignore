@@ -1,0 +1,10 @@
+# Ignore the large stats log file
+stats.log
+
+# Ignore all other log files
+*.log
+
+# Ignore your Python virtual environment folder
+env/
+__pycache__/
+*.pyc

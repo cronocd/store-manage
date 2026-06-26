@@ -6,9 +6,11 @@ matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
+
 class Home(tk.Frame):
-    def __init__(self, parent, master):
+    def __init__(self, parent, role):
         super().__init__(parent, bg="#ffffff")
+        self.role = role
         lbl = tk.Label(self, text="Welcome To Store", font=("Arial", 18), bg="#ffffff")
         lbl.pack(pady=50)
 
@@ -17,16 +19,19 @@ class Home(tk.Frame):
 
 
     def month_container_chartbar(self):
+
         self.Chartbar_Container_M = tk.Frame(self, bg='#ffffff')
         self.Chartbar_Container_M.pack(fill= 'y', side='right',expand=True)
 
         products = []
         stock = []
-        
+            
         record = CRUDSALESM().select_current_month() 
         for product in record:
-            products.append(product[1])
-            stock.append(product[2])
+            print(product)
+            if product[3]  == self.role[2]:
+                products.append(product[0])
+                stock.append(product[1])
 
         fig = Figure(figsize=(4,4), dpi=100)
 
@@ -50,14 +55,15 @@ class Home(tk.Frame):
     def daily_container_chartbar(self):
         self.Chartbar_Container_D = tk.Frame(self, bg='#ffffff')
         self.Chartbar_Container_D.pack(fill='y', side='left', expand=True)
-
+        
         products = []
         stock = []
         
         record = CRUDSALES().select() 
         for product in record:
-            products.append(product[1])
-            stock.append(product[2])
+            if product[3] == self.role[2]:
+                products.append(product[0])
+                stock.append(product[1])
 
         fig = Figure(figsize=(4,4), dpi=100)
 
@@ -78,3 +84,7 @@ class Home(tk.Frame):
         self.canvas_widget.pack(side= 'left', fill='y', expand=True, padx=5, pady=6)
 
         self.canvas.draw()
+    
+    def work(self, role):
+        
+        print(role)

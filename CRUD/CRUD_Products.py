@@ -71,8 +71,8 @@ if __name__ == '__main__':
     #product_1 = Product(name='Flour', stock=45, cost=1.5)
     #insert_p = CRUD().insert(product=product_1)
 
-    product_1 = Product(id=3,name='Spaghetti', stock=60, cost=2)
-    update_p = CRUD().update(product=product_1)
+    #product_1 = Product(id=3,name='Spaghetti', stock=60, cost=2)
+    #update_p = CRUD().update(product=product_1)
 
     #product_1 = Product(id = 5)
     #delete_p = CRUD().delete(product=product_1)

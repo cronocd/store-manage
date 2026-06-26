@@ -1,4 +1,4 @@
-from .Get_cursor import CursorM
+from get_cursor import Cursor
 import datetime
 import calendar
 
@@ -6,9 +6,9 @@ import calendar
 
 class CRUDSALESM:
     
-    _SELECT = 'SELECT * FROM monthdb'
-    _INSERT = 'INSERT INTO monthdb(name,quantity,date) VALUES(%s,%s,%s)'
-    _UPDATE = 'UPDATE monthdb SET quantity = quantity + %s WHERE id = %s'
+    _SELECT = 'SELECT * FROM monthsales'
+    _INSERT = 'INSERT INTO monthsales(name,quantity,date) VALUES(%s,%s,%s)'
+    _UPDATE = 'UPDATE monthsales SET quantity = quantity + %s WHERE id = %s'
     
     @classmethod
     def check_products(cls, products):
@@ -35,7 +35,7 @@ class CRUDSALESM:
     
     @classmethod
     def select(cls):
-        with CursorM() as cursor:
+        with Cursor() as cursor:
             cursor.execute(cls._SELECT)
             records = cursor.fetchall()
             products = []
@@ -50,26 +50,23 @@ class CRUDSALESM:
         first_day = datetime.date(today.year, today.month, 1)
         last_day = datetime.date(today.year, today.month, calendar.monthrange(today.year, today.month)[1])
         query = cls._SELECT + ' WHERE date BETWEEN %s AND %s ORDER BY date'
-        with CursorM() as cursor:
+        with Cursor() as cursor:
             cursor.execute(query, (first_day, last_day))
-            return cursor.fetchall()
+            records = cursor.fetchall()
+            return records
 
     @classmethod
     def select_month_sales(cls, year, month):
-        """Return aggregated sales (name, total_quantity) for the given month.
-
-        Uses a single SQL query with GROUP BY for efficiency.
-        """
         first_day = datetime.date(year, month, 1)
         last_day = datetime.date(year, month, calendar.monthrange(year, month)[1])
         query = (
             "SELECT name, SUM(quantity) as total "
-            "FROM monthdb "
+            "FROM monthsales "
             "WHERE date BETWEEN %s AND %s "
             "GROUP BY name "
             "ORDER BY total DESC"
         )
-        with CursorM() as cursor:
+        with Cursor() as cursor:
             cursor.execute(query, (first_day, last_day))
             return cursor.fetchall()
 
@@ -86,15 +83,15 @@ class CRUDSALESM:
         return cls.select_month_sales(prev_month_last.year, prev_month_last.month)
         
     def insert(cls, product):
-        with CursorM() as cursor:
+        with Cursor() as cursor:
             try: 
-                values = (product[0], product[1], product[2])
+                values = (product[0], product[1], product[2], product[3])
                 cursor.execute(cls._INSERT, values)
             except Exception as e:
                 print(f'An error occurred while we were trying add the sales.: {e}')
                 
     def update(cls, product):
-        with CursorM() as cursor:
+        with Cursor() as cursor:
             try:
                 values = (product[0], product[1])
                 cursor.execute(cls._UPDATE, values)
