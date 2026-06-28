@@ -1,67 +1,74 @@
 class User:
-    def __init__(self, name = '', lastname = '', age = 0, ci = 0, role = '', email = '', phone = '', pwd = ''):
-        self.name = name
-        self.lastname = lastname
-        self.age = age
-        self.ci = ci
-        self.role = role
-        self.email = email
-        self.phone = phone
-        self.pwd = pwd
-        
-        
+    def __init__(self, name='', lastname='', age=0, ci=0, role='', email='', phone='', pwd=''):
+        self._name = name
+        self._lastname = lastname
+        self._age = age
+        self._ci = ci
+        self._role = role
+        self._email = email
+        self._phone = phone
+        self._pwd = pwd
+
     @property
     def name(self):
-        return self.name
+        return self._name
+
     @name.setter
     def name(self, name):
-        self.name = name
-        
+        self._name = name
+
     @property
     def lastname(self):
-        return self.lastname
+        return self._lastname
+
     @lastname.setter
     def lastname(self, lastname):
-        self.lastname = lastname
-    
+        self._lastname = lastname
+
     @property
     def age(self):
-        return self.age
+        return self._age
+
     @age.setter
     def age(self, age):
-        self.age = age
-        
+        self._age = age
+
     @property
     def ci(self):
-        return self.ci
+        return self._ci
+
     @ci.setter
     def ci(self, ci):
-        self.ci = ci
-        
+        self._ci = ci
+
     @property
     def role(self):
-        return self.role
+        return self._role
+
     @role.setter
     def role(self, role):
-        self.role = role
-        
+        self._role = role
+
     @property
     def email(self):
-        return self.email
+        return self._email
+
     @email.setter
     def email(self, email):
-        self.email = email
-        
+        self._email = email
+
     @property
     def phone(self):
-        return self.phone
+        return self._phone
+
     @phone.setter
     def phone(self, phone):
-        self.phone = phone
-        
+        self._phone = phone
+
     @property
     def pwd(self):
-        return self.pwd
+        return self._pwd
+
     @pwd.setter
     def pwd(self, pwd):
-        self.pwd = pwd
+        self._pwd = pwd

@@ -3,7 +3,8 @@ from window_manager import Manager
 from Pages.home import Home
 from Check.history import History
 from tkinter.messagebox import showwarning, showinfo, showerror
-from CRUD.CRUD_USERS import User
+from CRUD.CRUD_USERS import CrudUser
+from Pages.Signin import SignIn
 
 class Login(tk.Tk):
     
@@ -29,9 +30,9 @@ class Login(tk.Tk):
         self.pwd.pack(pady=10)
         
         self.button = tk.Button(self, text='Enter', command=self.check_user)
-        self.button.pack(pady=30)
+        self.button.pack(pady=30, side='left')
         
-        self.buttonSing = tk.Button(self, text='Sing In')
+        self.buttonSing = tk.Button(self, text='Sing In', command=self.signin)
         self.buttonSing.pack(pady=30, side='right')
         
     def get_entries(self):
@@ -47,7 +48,7 @@ class Login(tk.Tk):
     def check_user(self):
         
         info = self.get_entries()
-        record = User().select()
+        record = CrudUser().select()
         found_user = False
         role = ()
         
@@ -78,6 +79,10 @@ class Login(tk.Tk):
         app = Manager(root, role)
         app.show_pages(Home)
         root.mainloop()
+        
+    def signin(self):
+        self.withdraw()
+        SignIn(self)
         
 
 

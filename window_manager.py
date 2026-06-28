@@ -35,11 +35,9 @@ class Manager:
 
         self.buttons_sell = tk.Button(self.nav_bar, text='Sell', relief='flat', font=('Arial', 12, 'bold'), command= lambda: self.show_pages(Sell_Window))
         self.buttons_sell.pack(fill=tk.X, padx=10, pady=50)
-        if self.role[0] == 'manage':
+        if self.role[0] == 'manage' or self.role[0] == 'admin':
             self.button_edit = tk.Button(self.nav_bar, text='Edit Products', relief='flat', font=('Arial', 12, 'bold'), command= lambda: self.show_pages(Edit))
             self.button_edit.pack(fill=tk.X, padx=10, pady=50)
-        else:
-            print('Someone is cooking right here\n\n\n\n')
             
         self.button_exit = tk.Button(self.nav_bar, text='Close', relief='flat', font=('Arial', 12, 'bold'), command=self.close_window)
         self.button_exit.pack(fill=tk.X, padx=10, pady=50)
