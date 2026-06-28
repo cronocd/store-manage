@@ -29,11 +29,11 @@ class Login(tk.Tk):
         self.pwd = tk.Entry(self, width=20, fg='black', font=('Arial', 12, 'bold'), show='*')
         self.pwd.pack(pady=10)
         
-        self.button = tk.Button(self, text='Enter', command=self.check_user)
-        self.button.pack(pady=30, side='left')
+        self.button = tk.Button(self, text='Enter', width=10 ,command=self.check_user)
+        self.button.pack(pady=30, side='left', padx=35)
         
-        self.buttonSing = tk.Button(self, text='Sing In', command=self.signin)
-        self.buttonSing.pack(pady=30, side='right')
+        self.buttonSing = tk.Button(self, text='Sing In', width=10 ,command=self.signin)
+        self.buttonSing.pack(pady=30, side='right', padx=30)
         
     def get_entries(self):
         
@@ -54,7 +54,7 @@ class Login(tk.Tk):
         
         if info:
             for user in record:
-                if user[1] == info[0] and user[8] == info[1]:
+                if user[1] == info[0] and user[8] == info[1] and user[9] == 'activate':
                     found_user = True
                     role = (user[5], user[1], user[4])
                     break

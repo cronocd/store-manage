@@ -2,10 +2,10 @@ from get_cursor import Cursor
 
 class CrudUser:
     
-    _SELECT = 'SELECT * FROM user_employees'
+    _SELECT = 'SELECT * FROM user_employees ORDER BY id ASC'
     _INSERT = 'INSERT INTO user_employees(name, lastname, age, ci, role, email, phone, password) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)'
-    _UPDATE = 'UPDATE user_employees SET age = %s, role = %s, phone = %s, password = %s WHERE id = %s'
-    _DELETE = 'DELETE FROM user_employees WHERE id = %s'
+    _UPDATE = 'UPDATE user_employees SET age = %s, role = %s, phone = %s, email = %s, status = %s WHERE ci = %s'
+    _DELETE = 'DELETE FROM user_employees WHERE ci = %s'
     
     
     
@@ -32,7 +32,7 @@ class CrudUser:
     def update(cls, user):
         with Cursor() as cursor:
             try:
-                value = (user[0], user[1], user[2], user[3], user[4])
+                value = (user[0], user[1], user[2], user[3], user[4], user[5])
                 cursor.execute(cls._UPDATE, value)
             except Exception as e:
                 print(f'An error occurred while we were trying to update a user: {e}')
@@ -47,7 +47,7 @@ class CrudUser:
 
 if __name__ == '__main__':
     
-    app = User()
+    app = CrudUser()
     
     record = app.select()
     

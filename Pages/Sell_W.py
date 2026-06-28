@@ -6,6 +6,7 @@ from CRUD.CRUD_DailySales import CRUDSALES
 from CRUD.CRUD_MonthSales import CRUDSALESM
 from CRUD.CRUD_Products import CRUD
 from Check.history import History
+from datetime import date
 
 
 class Sell_Window(tk.Frame):
@@ -40,9 +41,12 @@ class Sell_Window(tk.Frame):
         self.button_search = tk.Button(self.container_sh, text='Search', font=('Arial', 10, 'bold'),width=10, command=self.search_option)
         self.button_search.pack(side= 'left')
         
+        self.lb_total = tk.Label(self. container_sh, text='0.00', font=('Arial', 20, 'bold'), bg = 'White')
+        self.lb_total.pack(side='right') 
+        
     def container_tb_content(self):
         self.container_tb = tk.Frame(self)
-        self.container_tb.pack(side='left', fill='both')
+        self.container_tb.pack(side='left', fill='both', expand=True)
 
     def table_product(self):
 
@@ -66,7 +70,7 @@ class Sell_Window(tk.Frame):
     def container_sell(self):
         self.container_s = Treeview(self)
 
-        self.container_s.pack(side='left', fill='both')
+        self.container_s.pack(side='left', fill='both', expand=True)
 
     def table_sell(self):
 
@@ -152,11 +156,13 @@ class Sell_Window(tk.Frame):
             else:            
                 self.products_list.append(inf_product)
                 self.load_cart_table()
+                self.sum_total(inf_product)
                 print(self.products_list)
+                
         else:
             showwarning(title='...', message='Complete the field')
             self.clean_entries()
-
+    
     def load_cart_table(self):
 
         for product in self.sell_tb.get_children():
@@ -210,25 +216,39 @@ class Sell_Window(tk.Frame):
                     if record[0] in IDs:
                         pass
                     else:
+                        now = date.today()
                         product = (record[0], record[2], date_sale, self.role[2])
+                        productm = (record[0], record[2], now, self.role[2])
                         daily = CRUDSALES.check_products(product)
-                        month = CRUDSALESM.check_products(product)
+                        month = CRUDSALESM.check_products(productm)
                         store = CRUD.subtract((record[2], record[0]))
-                        if daily and month and store:
-                            showinfo(title = 'Sales', message= 'To sale is already')
+                if daily and month and store:
+                    showinfo(title = 'Sales', message= 'To sale is already')
 
-                            for product in self.sell_tb.get_children():
-                                self.sell_tb.delete(product)
+                    for product in self.sell_tb.get_children():
+                        self.sell_tb.delete(product)
 
-                            History().log_sales(self.products_list, 'Francisco')
-                            self.clean_entries()
-                        else:
-                            showerror(title='Sales', message='An error occurred please, check it') 
+                    History().log_sales(self.products_list, self.role[1])
+                    self.clean_entries()
+                    self.products_list = []
+                    self.lb_total['text'] = '0.00'
+                else:
+                    showerror(title='Sales', message='An error occurred please, check it') 
 
-                            for product in self.sell_tb.get_children():
-                                self.sell_tb.delete(product)
+                    for product in self.sell_tb.get_children():
+                        self.sell_tb.delete(product)
 
-                            self.products_list = []
+                    self.products_list = []
         else:
             showwarning(title='...', message='Add something to the list first.')
             self.products_list = []
+            
+    def sum_total(self, product):
+        
+        if float(self.lb_total['text']) <= 0.00:
+            total = float(product[1]) * int(product[2])
+            self.lb_total['text'] = total
+        else:
+            lb_total = float(self.lb_total['text'])
+            total = float(product[1]) * int(product[2]) + lb_total
+            self.lb_total['text'] = total

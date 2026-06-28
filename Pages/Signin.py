@@ -76,6 +76,7 @@ class SignIn(tk.Toplevel):
         self.pwd = tk.Entry(self.fields_container_r)
         self.pwd.pack()
         
+        
     def admin_fields(self):
         
         self.name_admin_lb = tk.Label(self.fields_container_l, text='Name Admin', bg='White', font=('Arial', 12))
@@ -91,6 +92,9 @@ class SignIn(tk.Toplevel):
         
         self.button = tk.Button(self.fields_container_l, text='Enter', font=('Arial', 12, 'bold'), command=self.add_employee)
         self.button.pack(pady=20)
+        
+        self.button_c = tk.Button(self.fields_container_r, text='Close', font=('Arial', 12, 'bold'), command=self.close_btn)
+        self.button_c.pack(pady=20)
 
     def valid_user(self):
         
@@ -141,10 +145,15 @@ class SignIn(tk.Toplevel):
             CrudUser().insert(user)
             
             showinfo(title= 'Sign In', message= 'The user was added')
-            self.master.deiconify()
             self.destroy()
+            self.master.deiconify()
         else:
             showerror(title= 'Sign In', message= 'The user wasn`t added')
+
+    def close_btn(self):
+        self.destroy()
+        self.master.deiconify()
+        
 if __name__ == '__main__':
     
     SignIn().mainloop()

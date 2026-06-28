@@ -11,7 +11,7 @@ class Home(tk.Frame):
     def __init__(self, parent, role):
         super().__init__(parent, bg="#ffffff")
         self.role = role
-        lbl = tk.Label(self, text="Welcome To Store", font=("Arial", 18), bg="#ffffff")
+        lbl = tk.Label(self, text=f"Welcome {role[1]}", font=("Arial", 18), bg="#ffffff")
         lbl.pack(pady=50)
 
         self.month_container_chartbar()
@@ -26,12 +26,10 @@ class Home(tk.Frame):
         products = []
         stock = []
             
-        record = CRUDSALESM().select_current_month() 
+        record = CRUDSALESM().select_current_month(self.role[2]) 
         for product in record:
-            print(product)
-            if product[3]  == self.role[2]:
-                products.append(product[0])
-                stock.append(product[1])
+            products.append(product[0])
+            stock.append(product[1])
 
         fig = Figure(figsize=(4,4), dpi=100)
 
@@ -59,9 +57,8 @@ class Home(tk.Frame):
         products = []
         stock = []
         
-        record = CRUDSALES().select() 
+        record = CRUDSALES().select(self.role[2]) 
         for product in record:
-            if product[3] == self.role[2]:
                 products.append(product[0])
                 stock.append(product[1])
 

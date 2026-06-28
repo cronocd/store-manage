@@ -1,38 +1,37 @@
 from get_cursor import Cursor
+from time import strftime
 
 
 
 class CRUDSALES:
     
-    _SELECT = 'SELECT * FROM dailysales WHERE date = CURRENT_DATE ORDER BY date DESC'
+    _SELECT = 'SELECT * FROM dailysales WHERE date = %s AND id_user = %s'
     _INSERT = 'INSERT INTO dailysales(name, quantity, date, id_user) VALUES(%s, %s, %s, %s)'
     _UPDATE = 'UPDATE dailysales SET quantity = quantity + %s WHERE name = %s AND id_user = %s AND date = %s'
     
     @classmethod
     def check_products(cls, products):
         crud = CRUDSALES()
-        records = crud.select()
+        records = crud.select(products[3])
         found_product = False
         
         for record in records:
-            # record indexes: name, quantity, date, id_user
-            if products[0] == record[0] and products[3] == record[3]:
+            if products[0] == record[0]:
                 product = (int(products[1]), products[0], products[3], products[2])
                 found_product = True
                 break
                 
         if found_product:
-            crud.update(product)
-            return True
+            return crud.update(product)
         else:
-            print('something wrong')
-            crud.insert(products)
-            return True
+            return crud.insert(products)
             
     
-    def select(cls):
+    def select(cls, id_user):
         with Cursor() as cursor:
-            cursor.execute(cls._SELECT)
+            now = strftime("%Y-%m-%d")
+            values = (now, id_user)
+            cursor.execute(cls._SELECT, values)
             records = cursor.fetchall()
             products = []
             for record in records:
@@ -44,16 +43,19 @@ class CRUDSALES:
             try: 
                 values = (product[0],product[1], product[2], product[3])
                 cursor.execute(cls._INSERT, values)
+                return True
             except Exception as e:
                 print(f'An error occurred while we were trying add the sales.: {e}')
-                
+                return False
     def update(cls, product):
         with Cursor() as cursor:
             try:
                 values = (product[0], product[1], product[2], product[3])
                 cursor.execute(cls._UPDATE, values)
+                return True
             except Exception as e:
                 print(f'An error occurred while we were trying to do a update: {e}')
+                return False
                 
                 
 if __name__ == '__main__':
