@@ -5,6 +5,8 @@ from datetime import date
 from CRUD.CRUD_DailySales import CRUDSALES
 from CRUD.CRUD_MonthSales import CRUDSALESM
 from CRUD.CRUD_Products import CRUD
+from CRUD.CRUD_EarnDaily import ManageEarnD
+from CRUD.CRUD_EarnMonthly import ManageEarnM
 from Check.history import History
 from datetime import date
 
@@ -14,6 +16,7 @@ class Sell_Window(tk.Frame):
         super().__init__(parent, bg='#ffffff')
         self.role = role
         self.products_list = []
+        self.product_name = None
         self.lb = tk.Label(self, text='Sell', font=('Arial',18, 'bold'), fg='black', bg='white')
         self.lb.pack(pady=20)
         self.container_search()
@@ -84,7 +87,7 @@ class Sell_Window(tk.Frame):
         self.sell_tb.column('quantity', width=96)
         
         self.sell_tb.pack(fill='both', expand=True)
-
+        
     def Entry_quantity(self):
 
         self.product_field = tk.Entry(self.fields, state='readonly')
@@ -96,11 +99,17 @@ class Sell_Window(tk.Frame):
         self.quantity_field = tk.Entry(self.fields)
         self.quantity_field.pack(side='left')
             
-        self.button_q = tk.Button(self.fields, text='ADD', font=('Arial', 10, 'bold'), command=self.add_list)
-        self.button_q.pack(side='left', padx=5)
+        self.add_btn = tk.Button(self.fields, text='ADD', font=('Arial', 10, 'bold'), command=self.add_list)
+        self.add_btn.pack(side='left', padx=5)
         
-        self.button_sell = tk.Button(self.fields, text='Sell', font=('Arial', 10, 'bold'), width=25, command=self.sell_button)
-        self.button_sell.pack(side='left', padx=50)
+        self.cancel_btn = tk.Button(self.container_sh, text='Cancel', font=('Arial', 10, 'bold'), width=12, command=self.cancel_process)
+        self.cancel_btn.pack(side='right', padx=45)
+        
+        self.delete_product_btn = tk.Button(self.container_sh, text='Delete Product', font=('Arial', 10, 'bold'), width=12, command=self.delete_product)
+        self.delete_product_btn.pack(side='right', padx=30)
+        
+        self.button_sell = tk.Button(self.fields, text='Sell', font=('Arial', 10, 'bold'), width=20, command=self.sell_button)
+        self.button_sell.pack(side='right', padx=45)
 
     def load_products(self):
 
@@ -153,11 +162,11 @@ class Sell_Window(tk.Frame):
                     
             if add is not True:
                 showwarning(title='Product in cart', message='The product is already')
+                self.clean_entries()
             else:            
                 self.products_list.append(inf_product)
                 self.load_cart_table()
                 self.sum_total(inf_product)
-                print(self.products_list)
                 
         else:
             showwarning(title='...', message='Complete the field')
@@ -229,6 +238,8 @@ class Sell_Window(tk.Frame):
                         self.sell_tb.delete(product)
 
                     History().log_sales(self.products_list, self.role[1])
+                    ManageEarnD().check((self.role[2], float(self.lb_total['text']), now))
+                    ManageEarnM().check_user((self.role[2], float(self.lb_total['text']), now))
                     self.clean_entries()
                     self.products_list = []
                     self.lb_total['text'] = '0.00'
@@ -252,3 +263,49 @@ class Sell_Window(tk.Frame):
             lb_total = float(self.lb_total['text'])
             total = float(product[1]) * int(product[2]) + lb_total
             self.lb_total['text'] = total
+            
+    def cancel_process(self):
+        
+        if len(self.products_list) != 0:
+            showinfo(title='Cancel', message='The sales was canceled')
+
+            for product in self.sell_tb.get_children():
+                self.sell_tb.delete(product)
+
+            self.products_list = []
+            self.lb_total['text'] = '0.00'
+        else:
+            showwarning(title='Cancel', message='Select something first')
+    
+    def delete_product(self):
+        
+        select = self.sell_tb.selection()
+        
+        if select:
+            product = self.sell_tb.item(select)['values']
+            
+            
+            lb_total = float(self.lb_total['text'])
+            total = lb_total - float(product[1]) * int(product[2])
+            self.lb_total['text'] = total
+            
+            id = 0
+            found = False
+            
+            for record in self.products_list:
+                
+                if record[0] == product[0]:
+                    found = True
+                    break
+                else:
+                    id += 1 
+            
+            if found:
+                self.products_list.pop(id)
+            
+            self.load_cart_table()
+            self.clean_entries()
+        else:
+            showerror(title='Remove Product', message='Select something first')
+            self.clean_entries()
+            

@@ -3,7 +3,8 @@ from tkinter import ttk
 from tkinter.messagebox import showerror, showinfo
 from CRUD.CRUD_USERS import CrudUser
 from Pages.Signin import SignIn
-from window_manager import Manager
+from CRUD.CRUD_EarnDaily import ManageEarnD
+from CRUD.CRUD_EarnMonthly import ManageEarnM
 
 class ViewUser(tk.Frame):
     
@@ -21,7 +22,7 @@ class ViewUser(tk.Frame):
         
     def container_top(self):
         
-        self.container_fd = tk.Frame(self)
+        self.container_fd = tk.Frame(self, bg='white')
         self.container_fd.pack(pady=10, fill='x')    
     
     def container_btm(self):
@@ -88,7 +89,7 @@ class ViewUser(tk.Frame):
         
     def tb(self):
         
-        headers = ('name', 'lastname', 'age', 'ci', 'role', 'phone', 'email', 'status')
+        headers = ('name', 'lastname', 'age', 'ci', 'role', 'phone', 'email', 'status', 'sales(d)', 'sales(m)')
         self.table_users = ttk.Treeview(self.container_tb, columns=headers, show='headings')
         
         self.table_users.heading('name', text='Name')
@@ -99,15 +100,19 @@ class ViewUser(tk.Frame):
         self.table_users.heading('phone', text='Phone')
         self.table_users.heading('email', text='Email')
         self.table_users.heading('status', text='Status')
+        self.table_users.heading('sales(d)', text='Sales(D)')
+        self.table_users.heading('sales(m)', text='Sales(M)')
         
-        self.table_users.column('name', width=60)
-        self.table_users.column('lastname', width=60)
-        self.table_users.column('age', width=20)
-        self.table_users.column('ci', width=60)
-        self.table_users.column('role', width=45)
-        self.table_users.column('phone', width=50)
-        self.table_users.column('email', width=70)
-        self.table_users.column('status', width=8)
+        self.table_users.column('name', width=45)
+        self.table_users.column('lastname', width=45)
+        self.table_users.column('age', width=5)
+        self.table_users.column('ci', width=40)
+        self.table_users.column('role', width=35)
+        self.table_users.column('phone', width=40)
+        self.table_users.column('email', width=65)
+        self.table_users.column('status', width=5)
+        self.table_users.column('sales(d)', width=5)
+        self.table_users.column('sales(m)', width=5)
         
         self.loadinfo()
         
@@ -122,7 +127,19 @@ class ViewUser(tk.Frame):
         records = CrudUser().select()
         
         for user in records:
-            self.table_users.insert(parent='', index='end', values=(user[1], user[2], user[3], user[4], user[5].capitalize(), user[7], user[6], user[9].capitalize()))
+            earn_day = ManageEarnD().select(user[4])
+            try:
+                earnd = earn_day[0][1]
+            except Exception:
+                earnd = 0.00
+            
+            earn_month = ManageEarnM().select(user[4])
+            try:
+                earnm = earn_month[0][1]
+            except Exception:
+                earnm = 0.00
+                
+            self.table_users.insert(parent='', index='end', values=(user[1], user[2], user[3], user[4], user[5].capitalize(), user[7], user[6], user[9].capitalize(), earnd, earnm))
             
     def insert_entries(self, event):
         select = self.table_users.selection()
@@ -175,4 +192,3 @@ class ViewUser(tk.Frame):
             
     def add_user(self, parent):
         SignIn(parent)
-        self.loadinfo()
