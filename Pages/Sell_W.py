@@ -237,7 +237,7 @@ class Sell_Window(tk.Frame):
                     for product in self.sell_tb.get_children():
                         self.sell_tb.delete(product)
 
-                    History().log_sales(self.products_list, self.role[1])
+                    History().log_sales(self.products_list, self.role[1], float(self.lb_total['text']))
                     ManageEarnD().check((self.role[2], float(self.lb_total['text']), now))
                     ManageEarnM().check_user((self.role[2], float(self.lb_total['text']), now))
                     self.clean_entries()

@@ -53,7 +53,7 @@ class Manager:
     def close_window(self):
         from Check.history import History
         
-        History().start_close_file(self.role[1])
+        History().close_file(self.role[1])
         self.root.destroy()
         
     def show_pages(self, pages_content):

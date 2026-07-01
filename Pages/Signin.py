@@ -104,9 +104,10 @@ class SignIn(tk.Toplevel):
         found = False
         
         for record in records:
-            if name == record[1] and pwd == record[8] and record == 'admin' or record[5] == 'manage':
-                found = True
-                break
+            if name == record[1] and pwd == record[8] and record[9] == 'activate':
+                if record[5] == 'manage' or record[5] == 'admin':
+                    found = True
+                    break
             
         if found:
             return True
